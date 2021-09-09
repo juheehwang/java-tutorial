@@ -53,7 +53,7 @@ public class RecursiveFileExtensionPrinter {
     }
 
     private void printAllFilesInDirectory(File fileParentPath) {
-        System.out.println(fileParentPath);
+        // System.out.println(fileParentPath);
 
         var fileList = fileParentPath.listFiles();
         if (fileList == null || fileList.length == 0) {
