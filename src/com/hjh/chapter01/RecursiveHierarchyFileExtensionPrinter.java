@@ -53,6 +53,7 @@ public class RecursiveHierarchyFileExtensionPrinter {
         for (File file : files) {
             var fileName = file.getName();
 
+            //도움 받은 부분
             if (file.isDirectory()) {
                 var childNode = new Node(fileName, newNode.getDepth() + 1);
                 boolean result = createNodeRecursively(file, childNode);
