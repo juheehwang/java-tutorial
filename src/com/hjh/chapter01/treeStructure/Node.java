@@ -14,25 +14,40 @@ public class Node implements Comparable<Node> {
         this.depth = depth;
     }
 
+    public String getNodeName() {
+        return nodeName;
+    }
+
     public int getDepth() {
         return depth;
     }
 
-    public Node addNode(String childName, int depth) {
+    public Node addChild(String childName, int depth) {
         var childNode = new Node(childName, depth + 1);
         children.add(childNode);
 
         return childNode;
     }
 
+    public Node addChild(Node child) {
+        children.add(child);
+        return child;
+    }
+
     public List<Node> getChildren() {
         return children;
     }
 
-    public boolean checkEmptyChild(Node checkName) {
+    public boolean checkFitChild(Node checkName, String criteria) {
         boolean check = false;
 
-        if (!checkName.getChildren().isEmpty()) check = true;
+        for (int i = 0; i < checkName.getChildren().size(); i++) {
+            System.out.println(checkName.getChildren());
+            if (checkName.getChildren().get(i).toString().contains(criteria)) {
+                check = true;
+            }
+        }
+
 
         return check;
     }
@@ -43,11 +58,17 @@ public class Node implements Comparable<Node> {
         message.append("  ".repeat(Math.max(0, depth))).append(nodeName).append("\n");
 
         Collections.sort(children);
+
         for (var child : children) {
-            message.append(child.toString());
+            // System.out.println("criteria" + criteria);
+
+            message.append(child);
+
         }
 
+
         return message.toString();
+
     }
 
     @Override
