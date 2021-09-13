@@ -47,15 +47,11 @@ public class CopyFileMaker {
         for (File child : childList) {
 
             if (!child.isDirectory() && child.getName().endsWith(fileExtension)) {
-                // System.out.println(child.getAbsoluteFile().toString());
+                System.out.println(child.getAbsoluteFile().toString());
                 var removeRootFile = child.getPath().replaceAll(originFile.getPath(), "");
                 System.out.println(removeRootFile);
                 var temp = new File(destination + File.separator + removeRootFile);
-                
-                if (temp.mkdirs()) {
-                    System.out.println("디렉토리 생성완료!!");
-                }
-
+                temp.mkdirs();
                 Files.copy(child.toPath(), temp.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
                 return;
