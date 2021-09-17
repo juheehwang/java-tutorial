@@ -2,6 +2,8 @@ package com.hjh.chapter05;
 
 import java.io.*;
 import java.net.ServerSocket;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ImageForwardServer {
     private ServerSocket serverSocket;
@@ -22,6 +24,9 @@ public class ImageForwardServer {
     }
 
     public void start() throws IOException {
+        Map<File, byte[]> cacheMap = new HashMap<>();
+        System.out.println("생성후 mapKeysize: " + cacheMap.size());
+
         while (true) {
             var socket = serverSocket.accept();
             System.out.println("------------ 로컬 호스트와 연결 ------------");
@@ -29,7 +34,10 @@ public class ImageForwardServer {
             var socketOutputStream = socket.getOutputStream();
             var writer = new BufferedWriter(new OutputStreamWriter(socketOutputStream));
 
+
             var commandLine = reader.readLine();
+
+
             System.out.println("COMMAND_LINE: " + commandLine);
             var fileNameValidator = new FileNameValidator(commandLine);
             boolean validationResult = fileNameValidator.validate();
@@ -54,10 +62,20 @@ public class ImageForwardServer {
                     writer.write(message + "\n");
                 } else {
                     var responseDataGenerator = new ResponseDataGenerator(requestedFile);
-                    writer.write(responseDataGenerator.getResponseHeader());
-                    writer.flush();
+                    if (cacheMap.containsKey(requestedFile)) {
+                        System.out.println("cache hit");
+                        writer.write(responseDataGenerator.getResponseHeader());
+                        writer.flush();
+                        socketOutputStream.write(cacheMap.get(requestedFile));
+                    } else {
+                        cacheMap.put(requestedFile, responseDataGenerator.getResponseBody());
+                        System.out.println("cache miss발생! cache 등록 mapKeysize: " + cacheMap.size());
+                        writer.write(responseDataGenerator.getResponseHeader());
+                        writer.flush();
 
-                    socketOutputStream.write(responseDataGenerator.getResponseBody());
+
+                        socketOutputStream.write(responseDataGenerator.getResponseBody());
+                    }
                     socketOutputStream.flush();
                 }
             }
