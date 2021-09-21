@@ -1,6 +1,7 @@
 package com.hjh.chapter05;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,17 +31,12 @@ public class ImageForwardServer {
         while (true) {
             var socket = serverSocket.accept();
             System.out.println("------------ 로컬 호스트와 연결 ------------");
-            var reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            var socketOutputStream = socket.getOutputStream();
-            var writer = new BufferedWriter(new OutputStreamWriter(socketOutputStream));
+            InAndOutGenerator inAndOutGenerator = new InAndOutGenerator(socket);
+            var socketOutputStream = inAndOutGenerator.socketOutputStream();
+            var writer = inAndOutGenerator.writer();
 
-
-            var commandLine = reader.readLine();
-
-
-            System.out.println("COMMAND_LINE: " + commandLine);
-            var fileNameValidator = new FileNameValidator(commandLine);
-            boolean validationResult = fileNameValidator.validate();
+            //  var fileNameValidator = new FileNameValidator(commandLine);
+            //boolean validationResult = fileNameValidator.validate();
             System.out.println("VALIDATION_RESULT: " + validationResult);
             var requestedFile = fileNameValidator.getRequestedFile();
             System.out.println("REQUESTED_FILE: " + requestedFile.getAbsolutePath());
@@ -82,6 +78,7 @@ public class ImageForwardServer {
 
             writer.flush();
             socketOutputStream.flush();
+
             socket.close();
         }
     }
