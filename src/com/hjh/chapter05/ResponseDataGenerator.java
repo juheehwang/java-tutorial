@@ -8,14 +8,26 @@ import java.nio.file.Path;
 public class ResponseDataGenerator {
     private final File filePath;
     private int statusCode;
-
+    
     public ResponseDataGenerator(File filePath) {
         this.filePath = filePath;
     }
 
-    public String getResponseHeader(int code, String message) {
-        statusCode = code;
-
+    public String getResponseHeader(int code) {
+        System.out.println(filePath + "오냐??");
+        setStatusCode(code);
+        String message;
+        switch (code) {
+            case 400:
+                message = "File is too large, Cannot serve a file larger than 10MB: requested file size is : " + filePath.length();
+                break;
+            case 404:
+                message = "No Such File Found: " + filePath.getAbsolutePath();
+                break;
+            default:
+                message = "Response is successfully";
+                break;
+        }
         return "HTTP/1.1 " + statusCode + "\n" +
                 "Content-Type: image/png\n" +
                 "Content-Length: " + filePath.length() + "\n" +
@@ -27,8 +39,12 @@ public class ResponseDataGenerator {
         return Files.readAllBytes(Path.of(filePath.getAbsolutePath()));
     }
 
+    public void setStatusCode(int statusCode) {
+        this.statusCode = statusCode;
+    }
+
     public int getStatusCode() {
         return statusCode;
     }
-  
+
 }

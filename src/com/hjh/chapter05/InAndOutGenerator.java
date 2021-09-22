@@ -2,35 +2,40 @@ package com.hjh.chapter05;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.Map;
 
 public class InAndOutGenerator {
     private final Socket socket;
     private SuitableResponseProvider suitableResponseProvider;
-    private ResponseDataGenerator responseDataGenerator;
 
     public InAndOutGenerator(Socket socket) {
         this.socket = socket;
     }
 
-    public String readCommendLine() throws IOException {
+    public void readCommendLine() throws IOException {
         var bufferReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         String commendLine = bufferReader.readLine();
         suitableResponseProvider = new SuitableResponseProvider(commendLine);
-        return commendLine;
     }
 
-    public void socketOutputStream() throws IOException {
-        if (responseDataGenerator.getStatusCode() == 200) {
-            var outputStream = socket.getOutputStream();
-            outputStream.write(responseDataGenerator.getResponseBody());
-            outputStream.flush();
-        }
-    }
-
-    public void writer() throws IOException {
+    public void writer(Map<File, byte[]> cacheMap) throws IOException {
         var bufferWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-        bufferWriter.write(suitableResponseProvider.forwardToFileWriter());
+        var fileName = suitableResponseProvider.getResponseFileNameToProvider();
+        var outputStream = socket.getOutputStream();
+
+        bufferWriter.write(suitableResponseProvider.respondForFileWriter());
         bufferWriter.flush();
+
+        if (cacheMap.containsKey(fileName)) {
+            System.out.println("cache hit!!!");
+            outputStream.write(cacheMap.get(fileName));
+        } else {
+            cacheMap.put(fileName, suitableResponseProvider.getResponseBodyToProvider());
+            System.out.println("cache miss...");
+            outputStream.write(suitableResponseProvider.getResponseBodyToProvider());
+        }
+        outputStream.flush();
+
     }
 
 }

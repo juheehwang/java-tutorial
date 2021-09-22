@@ -1,5 +1,8 @@
 package com.hjh.chapter05;
 
+import java.io.File;
+import java.io.IOException;
+
 public class SuitableResponseProvider {
     private final String commendLine;
     private FileNameValidator fileNameValidator;
@@ -9,32 +12,31 @@ public class SuitableResponseProvider {
         this.commendLine = commendLine;
     }
 
-    public String forwardToFileWriter() {
-        fileNameValidator = new FileNameValidator(commendLine);
-        String result = "";
+    public String respondForFileWriter() {
         int statusCode;
-        String message;
-
+        System.out.println(commendLine);
+        fileNameValidator = new FileNameValidator(commendLine);
+        System.out.println("fileNameValidator.getRequestFile()" + fileNameValidator.getRequestedFile());
         if (fileNameValidator.validate()) {
             responseDataGenerator = new ResponseDataGenerator(fileNameValidator.getRequestedFile());
             if (fileNameValidator.getRequestedFile().length() > 10 * 1024 * 1024) {
                 statusCode = 400;
-                message = "File is too large, Cannot serve a file larger than 10MB: requested file size is : " + fileNameValidator.getRequestedFile().length();
-            } else {
-                statusCode = 200;
-                message = "Response is successfully";
             }
-            result = responseDataGenerator.getResponseHeader(statusCode, message);
+            statusCode = 200;
 
         } else {
-            responseDataGenerator = new ResponseDataGenerator(fileNameValidator.getRequestedFile());
             statusCode = 404;
-            message = "No Such File Found: " + fileNameValidator.getRequestedFile().getAbsolutePath();
-            result = responseDataGenerator.getResponseHeader(statusCode, message);
-
         }
+        return responseDataGenerator.getResponseHeader(statusCode);
+    }
 
-        return result;
+    public File getResponseFileNameToProvider() {
+        fileNameValidator = new FileNameValidator(commendLine);
+        return fileNameValidator.getRequestedFile();
+    }
+
+    public byte[] getResponseBodyToProvider() throws IOException {
+        return responseDataGenerator.getResponseBody();
     }
 
 }
