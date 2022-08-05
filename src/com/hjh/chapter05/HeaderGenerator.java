@@ -1,46 +1,58 @@
 package com.hjh.chapter05;
 
 import java.io.File;
+import java.util.Map;
 
 public class HeaderGenerator {
 
+  private static final Map<Integer, String> STATUS_MESSAGE_MAP = Map.of(
+      200, "Response is successfully",
+      404, "No Such File Found",
+      400, "File is too large, Cannot serve a file larger than 10M"
+  );
+
   private final File targetFile;
   private int statusCode;
-  private String message;
+  private String header;
 
   public HeaderGenerator(File targetFile) {
     this.targetFile = targetFile;
+    this.initialize();
+  }
+
+  public File getTargetFile() {
+    return targetFile;
   }
 
   public String getHeader() {
-    statusCode = 200;
-    message = "Response is successfully";
-
-    if (!targetFile.exists()) {
-      statusCode = 404;
-      message = "No Such File Found: " + targetFile.getName();
-    } else if (targetFile.length() > 10 * 1024 * 1024) {
-      statusCode = 400;
-      message =
-          "File is too large, Cannot serve a file larger than 10MB: requested file size is : "
-              + targetFile.length();
-    }
-    return buildHeader();
+    return header;
   }
 
-  private String buildHeader() {
-    var completedHeader = new StringBuilder();
-    completedHeader.append("HTTP/1.1 ");
-    completedHeader.append(statusCode);
-    completedHeader.append("\n");
-    completedHeader.append(statusCode == 200 ? "Content-Type: image/png\n" : "");
-    completedHeader.append(
-        statusCode == 200 ? "Content-Length: " + targetFile.length() + "\n" : "");
-    completedHeader.append("Message: ");
-    completedHeader.append(message);
-    completedHeader.append("\n");
-    completedHeader.append("Connection: close\n\n");
+  public int getStatusCode() {
+    return statusCode;
+  }
 
-    return completedHeader.toString();
+  private void initialize() {
+    setStatusCode();
+    buildHeader();
+  }
+
+  private void setStatusCode() {
+    statusCode = !targetFile.exists() ? 404 :
+        targetFile.length() > 10 * 1024 * 1024 ? 400 :
+            200;
+  }
+
+  private void buildHeader() {
+
+    header = "HTTP/1.1 "
+        + statusCode
+        + "\n"
+        + (statusCode == 200 ? "Content-Type: image/png\n" : "")
+        + (statusCode == 200 ? "Content-Length: " + targetFile.length() + "\n" : "")
+        + "Message: "
+        + STATUS_MESSAGE_MAP.get(statusCode)
+        + "\n"
+        + "Connection: close\n\n";
   }
 }
