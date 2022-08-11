@@ -11,8 +11,8 @@ public class SumNumsAndString {
 
   public static void main(String[] args) {
 
-    sum(sampleString);
- sumInt();
+//    sum(sampleString);
+// sumInt();
  checkDuplicatedNum();
   }
 
@@ -46,10 +46,23 @@ public class SumNumsAndString {
     int[] numList = new int[]{2,1,4,5,6};
     Map<Integer, Integer> intMap = new HashMap<>();
     boolean result = false;
+    int maxVal =0;
+    int sumNumList = 0;
+    int sumMaxValFactorial = 0;
+
     for(int i : numList){
+      maxVal = Math.max(maxVal,i);
+      sumNumList += i;
       intMap.put(i,1);
     }
-    if(intMap.containsKey(1)&& intMap.size() == numList.length) {
+
+    while(maxVal>0){
+      sumMaxValFactorial += maxVal;
+      maxVal = maxVal-1;
+    }
+
+
+    if(intMap.containsKey(1)&& intMap.size() == numList.length && sumNumList==sumMaxValFactorial) {
       result = true;
     }
     System.out.println(result);
