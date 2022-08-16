@@ -13,7 +13,7 @@ public class SumNumsAndString {
 
 //    sum(sampleString);
 // sumInt();
- checkDuplicatedNum();
+ checkDuplicatedNum(new int[]{2,1,4,5,6,3});
   }
 
 
@@ -42,8 +42,7 @@ public class SumNumsAndString {
   }
 
 
-  public static void checkDuplicatedNum(){
-    int[] numList = new int[]{2,1,4,5,6};
+  public static void checkDuplicatedNum(final int[] numList){
     Map<Integer, Integer> intMap = new HashMap<>();
     boolean result = false;
     int maxVal =0;

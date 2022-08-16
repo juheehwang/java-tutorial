@@ -11,7 +11,7 @@ public class SumStretchOfNums {
 
   public static void main(String[] args) {
     int[] numList = new int[]{2,1,4,5,6,9,3};
-    sumNumsBetweenStartToEndIndex(numList,4,4);
+    sumNumsBetweenStartToEndIndex(numList,2,4);
   }
 
 
@@ -21,6 +21,7 @@ public class SumStretchOfNums {
    for(int i = start-1; i<end;i++){
      result +=numList[i];
    }
+
     System.out.println(result);
   }
 }
