@@ -8,7 +8,7 @@ public class CountOfSumSpecificTargetNum {
    * EX) 15 [{1,2,3,4,5}, {4,5,6}, {7,8}, {10}] = 4개
    */
   public static void main(String[] args) {
-    int num = 18;
+    int num = 20;
     countSums(num);
   }
 
@@ -16,22 +16,20 @@ public class CountOfSumSpecificTargetNum {
   public static void countSums(int num) {
     int count = 1;
     int sum = 0;
-
     int[] arr = new int[num];
 
-    for (int i = 1; i <=(int)Math.ceil(arr.length/2); i++) {
-      while (sum < num) {
-        for (int j = i; j < arr.length+1; j++) {
-
+    for (int i = 1; i <arr.length; i++) {
+      int j = i;
+      while (sum <= num) {
           if(num == sum){
             count++;
             break;
+
           }
-            sum+=j;
-          }
+        sum+=j;
+          j++;
       }
       sum = 0;
-
     }
       System.out.println(count);
     }
